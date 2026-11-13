@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -u
+
+last_hash=""
+
+while true; do
+  targets="$(xclip -selection clipboard -t TARGETS -o 2>/dev/null || true)"
+
+  # 只有发现 image/bmp，且没有 image/png，才处理
+  if echo "$targets" | grep -q '^image/bmp$' && ! echo "$targets" | grep -q '^image/png$'; then
+    bmp="/tmp/clip-bmp-png-$$.bmp"
+    png="/tmp/clip-bmp-png-$$.png"
+
+    if xclip -selection clipboard -t image/bmp -o > "$bmp" 2>/dev/null; then
+      current_hash="$(sha256sum "$bmp" | awk '{print $1}')"
+
+      # 避免重复处理同一张图
+      if [ "$current_hash" != "$last_hash" ]; then
+        if convert "$bmp" "$png" 2>/dev/null; then
+          xclip -selection clipboard -t image/png -i "$png"
+          last_hash="$current_hash"
+          notify-send "Clipboard" "BMP converted to PNG"
+        fi
+      fi
+    fi
+
+    rm -f "$bmp" "$png"
+  fi
+
+  sleep 0.5
+done
