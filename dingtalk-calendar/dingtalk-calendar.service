@@ -5,9 +5,9 @@ StartLimitBurst=3
 
 [Service]
 Type=simple
-Environment=PATH=/home/yhr/.local/bin:/usr/local/bin:/usr/bin:/bin
-WorkingDirectory=/home/yhr/.local/share/dingtalk-calendar
-ExecStart=/home/yhr/.local/bin/dws event consume user_im_message_receive_o2o_all user_im_message_receive_group_all --flatten --output-dir /home/yhr/.local/share/dingtalk-calendar/inbox --duration 24h --format json
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+WorkingDirectory=%h/.local/share/dingtalk-calendar
+ExecStart=%h/.local/bin/dws event consume user_im_message_receive_o2o_all user_im_message_receive_group_all --flatten --output-dir %h/.local/share/dingtalk-calendar/inbox --duration 24h --format json
 Restart=always
 RestartSec=30
 KillMode=mixed
